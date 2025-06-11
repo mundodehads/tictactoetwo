@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <iostream>
 
+#include "globals.hpp"
 #include "button.hpp"
 #include "home.hpp"
 #include "tictactoetwo.hpp"
@@ -14,8 +15,9 @@ enum GameState
 
 int main()
 {
-  InitWindow(800, 600, "Tic Tac Toe Two!");
+  InitWindow(windowWidth, windowHeight, "Tic Tac Toe Two!");
   SetTargetFPS(60);
+  RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
 
   Home home;
   TicTacToeTwo game;
@@ -23,6 +25,9 @@ int main()
 
   while (!WindowShouldClose() && currentState != EXIT)
   {
+    BeginTextureMode(target);
+    ClearBackground(BLACK);
+
     switch (currentState)
     {
     case MENU:
@@ -36,7 +41,7 @@ int main()
       else if (home.gameStart)
       {
         currentState = PLAYING;
-        game.Reset(); // Reset the game when starting
+        game.Reset();
       }
       break;
 
@@ -47,15 +52,28 @@ int main()
       if (game.shouldReturnToMenu())
       {
         currentState = MENU;
-        home.gameStart = false; // Reset the home state
+        home.gameStart = false;
       }
       break;
 
     case EXIT:
       break;
     }
+    EndTextureMode();
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawTexturePro(
+        target.texture,
+        (Rectangle){0, 0, (float)virtualWidth, -(float)virtualHeight},
+        (Rectangle){0, 0, (float)windowWidth, (float)windowHeight},
+        (Vector2){0, 0},
+        0.0f,
+        WHITE);
+    EndDrawing();
   }
 
+  UnloadRenderTexture(target);
   CloseWindow();
   return 0;
 }
