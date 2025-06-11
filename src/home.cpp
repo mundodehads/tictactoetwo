@@ -1,4 +1,3 @@
-
 #include <raylib.h>
 #include <iostream>
 
@@ -12,6 +11,11 @@ Home::Home()
   background = LoadTexture("assets/background.png");
   gameExit = false;
   gameStart = false;
+}
+
+Home::~Home()
+{
+  UnloadTexture(background);
 }
 
 void Home::Update()
