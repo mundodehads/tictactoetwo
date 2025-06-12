@@ -1,18 +1,16 @@
 #include <raylib.h>
-#include <iostream>
 
 #include "tictactoetwo.hpp"
 #include "globals.hpp"
 
 TicTacToeTwo::TicTacToeTwo()
-    : backButton("assets/back_button.png", {10, 10}, 0.5f), returnToMenu(false), gameOverTimer(0.0f)
+    : backButton("<--", {fontSize / 2.0f, fontSize / 2.0f}, 16, 10, fontSize / 2), returnToMenu(false), gameOverTimer(0.0f)
 {
     Reset();
 }
 
 void TicTacToeTwo::Reset()
 {
-    // Initialize empty board
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -36,14 +34,12 @@ void TicTacToeTwo::Update()
     mousePosition.y *= scaleY;
     bool mousePressed = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 
-    // Check back button
     if (backButton.isPressed(mousePosition, mousePressed))
     {
         returnToMenu = true;
         return;
     }
 
-    // Handle game logic only if game is ongoing
     if (gameResult == ONGOING)
     {
         if (mousePressed)
@@ -59,15 +55,13 @@ void TicTacToeTwo::Update()
     }
     else
     {
-        // Game is over, start timer for auto-return to menu
         gameOverTimer += GetFrameTime();
-        if (gameOverTimer > 3.0f)
-        { // Return to menu after 3 seconds
+        if (gameOverTimer > 10.0f) // Return to menu after 10 seconds
+        {
             returnToMenu = true;
         }
 
-        // Or allow immediate return with any click
-        if (mousePressed)
+        if (mousePressed) // Immediate return to menu
         {
             returnToMenu = true;
         }
@@ -76,38 +70,26 @@ void TicTacToeTwo::Update()
 
 void TicTacToeTwo::Draw() const
 {
-    ClearBackground(DARKBLUE);
+    ClearBackground(palette[3]);
 
-    // Draw game title
-    const char *title = "Tic Tac Toe Two!";
-    DrawText(title,
-             virtualWidth / 2 - MeasureText(title, titleFontSize) / 2,
-             10,
-             titleFontSize,
-             WHITE);
-
-    // Draw current player indicator
     if (gameResult == ONGOING)
     {
         const char *playerText = (currentPlayer == PLAYER_X) ? "Player X's Turn" : "Player O's Turn";
-        int playerFontSize = titleFontSize / 2;
+        int playerFontSize = fontSize / 2;
         DrawText(playerText,
                  virtualWidth / 2 - MeasureText(playerText, playerFontSize) / 2,
-                 30,
                  playerFontSize,
-                 WHITE);
+                 playerFontSize,
+                 palette[1]);
     }
 
-    // Draw the game board
     DrawBoard();
 
-    // Draw game result
     if (gameResult != ONGOING)
     {
         DrawGameResult();
     }
 
-    // Draw back button
     backButton.Draw();
 }
 
@@ -116,11 +98,7 @@ void TicTacToeTwo::HandleCellClick(int row, int col)
     if (board[row][col] == EMPTY)
     {
         board[row][col] = currentPlayer;
-
-        // Switch player
         currentPlayer = (currentPlayer == PLAYER_X) ? PLAYER_O : PLAYER_X;
-
-        std::cout << "Cell clicked: " << row << ", " << col << std::endl;
     }
 }
 
@@ -186,16 +164,12 @@ void TicTacToeTwo::DrawBoard() const
     const float boardX = (virtualWidth - boardSize) / 2.0f;
     const float boardY = 50.0f;
 
-    // Draw grid lines
     for (int i = 1; i < 3; i++)
     {
-        // Vertical lines
-        DrawLine(boardX + i * cellSize, boardY, boardX + i * cellSize, boardY + boardSize, WHITE);
-        // Horizontal lines
-        DrawLine(boardX, boardY + i * cellSize, boardX + boardSize, boardY + i * cellSize, WHITE);
+        DrawLine(boardX + i * cellSize, boardY, boardX + i * cellSize, boardY + boardSize, palette[0]);
+        DrawLine(boardX, boardY + i * cellSize, boardX + boardSize, boardY + i * cellSize, palette[0]);
     }
 
-    // Draw cells
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -251,16 +225,20 @@ void TicTacToeTwo::DrawGameResult() const
 
     if (resultText[0] != '\0')
     {
-        int fontSize = titleFontSize / 2;
-        int margin = 30;
-        int textWidth = MeasureText(resultText, fontSize);
-        int y = virtualHeight - margin - fontSize + 10;
-        DrawText(resultText, (virtualWidth - textWidth) / 2, y, fontSize, textColor);
+        int resultFontSize = fontSize / 2;
+        DrawText(resultText,
+                 virtualWidth / 2 - MeasureText(resultText, resultFontSize) / 2,
+                 resultFontSize,
+                 resultFontSize,
+                 textColor);
 
         const char *infoText = "Click anywhere or wait to return to menu";
-        int infoFontSize = titleFontSize / 2 - 8;
-        int infoTextWidth = MeasureText(infoText, infoFontSize);
-        DrawText(infoText, (virtualWidth - infoTextWidth) / 2, y + fontSize + 5, infoFontSize, WHITE);
+        int infoFontSize = resultFontSize / 2;
+        DrawText(infoText,
+                 virtualWidth / 2 - MeasureText(infoText, infoFontSize) / 2,
+                 infoFontSize * 2 + resultFontSize,
+                 infoFontSize,
+                 palette[0]);
     }
 }
 
@@ -271,14 +249,12 @@ Vector2 TicTacToeTwo::GetCellFromMousePos(Vector2 mousePos)
     const float boardX = (virtualWidth - boardSize) / 2.0f;
     const float boardY = 50.0f;
 
-    // Check if mouse is within board bounds
     if (mousePos.x < boardX || mousePos.x > boardX + boardSize ||
         mousePos.y < boardY || mousePos.y > boardY + boardSize)
     {
-        return {-1, -1}; // Outside board
+        return {-1, -1};
     }
 
-    // Calculate cell coordinates
     int col = (int)((mousePos.x - boardX) / cellSize);
     int row = (int)((mousePos.y - boardY) / cellSize);
 

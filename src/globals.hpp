@@ -6,4 +6,5 @@ extern const int windowWidth;
 extern const int windowHeight;
 extern const int buttonWidth;
 extern const int buttonHeight;
-extern const int titleFontSize;
+extern const int fontSize;
+extern const Color palette[];

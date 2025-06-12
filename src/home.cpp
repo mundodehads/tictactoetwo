@@ -1,22 +1,15 @@
 #include <raylib.h>
-#include <iostream>
 
 #include "home.hpp"
 #include "globals.hpp"
 #include "button.hpp"
 
 Home::Home()
-    : startButton("assets/start_button.png", {virtualWidth / 2.0f - buttonWidth / 4.0f, virtualHeight / 3.0f}, 0.5f),
-      exitButton("assets/exit_button.png", {virtualWidth / 2.0f - buttonWidth / 4.0f, virtualHeight / 2.0f}, 0.5f)
+    : startButton("Start", {virtualWidth / 2.0f - buttonWidth / 2.0f, virtualHeight / 2.0f - buttonHeight}, buttonWidth, buttonHeight, fontSize),
+      exitButton("Exit", {virtualWidth / 2.0f - buttonWidth / 2.0f, (virtualHeight / 2.0f) + (buttonHeight * 0.5f)}, buttonWidth, buttonHeight, fontSize)
 {
-  background = LoadTexture("assets/background.png");
   gameExit = false;
   gameStart = false;
-}
-
-Home::~Home()
-{
-  UnloadTexture(background);
 }
 
 void Home::Update()
@@ -31,21 +24,32 @@ void Home::Update()
 
   if (exitButton.isPressed(mousePosition, mousePressed))
   {
-    std::cout << "Exit Button Pressed" << std::endl;
     gameExit = true;
   }
 
   if (startButton.isPressed(mousePosition, mousePressed))
   {
-    std::cout << "Start Button Pressed" << std::endl;
     gameStart = true;
   }
 }
 
 void Home::Draw() const
 {
-  ClearBackground(BLACK);
-  DrawTexture(background, 0, 0, WHITE);
+  ClearBackground(palette[3]);
+  const char *gameTitle = "Tic-Tac-Toe Two!";
+  int gameTitlePosition = fontSize;
+  DrawText(gameTitle,
+           virtualWidth / 2 - MeasureText(gameTitle, fontSize) / 2,
+           gameTitlePosition,
+           fontSize,
+           palette[1]);
+  const char *gameSubTitle = "Size matters. Strategy too.";
+  int gameSubTitleSize = fontSize / 2;
+  DrawText(gameSubTitle,
+           virtualWidth / 2 - MeasureText(gameSubTitle, gameSubTitleSize) / 2,
+           gameTitlePosition * 2,
+           gameSubTitleSize,
+           palette[0]);
   startButton.Draw();
   exitButton.Draw();
 }

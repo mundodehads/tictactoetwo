@@ -1,5 +1,4 @@
 #include <raylib.h>
-#include <iostream>
 
 #include "globals.hpp"
 #include "button.hpp"
@@ -26,7 +25,6 @@ int main()
   while (!WindowShouldClose() && currentState != EXIT)
   {
     BeginTextureMode(target);
-    ClearBackground(BLACK);
 
     switch (currentState)
     {
@@ -62,7 +60,6 @@ int main()
     EndTextureMode();
 
     BeginDrawing();
-    ClearBackground(BLACK);
     DrawTexturePro(
         target.texture,
         (Rectangle){0, 0, (float)virtualWidth, -(float)virtualHeight},

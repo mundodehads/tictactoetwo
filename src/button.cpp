@@ -1,38 +1,36 @@
 #include "button.hpp"
+#include "globals.hpp"
+#include <cstring>
 
-Button::Button(const char *imagePath, Vector2 imagePosition, float scale)
+Button::Button(const char *label, Vector2 pos, float width, float height, int fontSize)
+    : position(pos), width(width), height(height), fontSize(fontSize)
 {
-    Image image = LoadImage(imagePath);
-
-    int originalWidth = image.width;
-    int originalHeight = image.height;
-
-    int newWidth = static_cast<int>(originalWidth * scale);
-    int newHeight = static_cast<int>(originalHeight * scale);
-
-    ImageResize(&image, newWidth, newHeight);
-    texture = LoadTextureFromImage(image);
-    UnloadImage(image);
-    position = imagePosition;
+    text = new char[strlen(label) + 1];
+    strcpy(text, label);
 }
 
 Button::~Button()
 {
-    UnloadTexture(texture);
+    delete[] text;
 }
 
 void Button::Draw() const
 {
-    DrawTextureV(texture, position, WHITE);
+    DrawRectangle(static_cast<int>(position.x), static_cast<int>(position.y),
+                  static_cast<int>(width), static_cast<int>(height), palette[1]);
+
+    DrawRectangleLines(static_cast<int>(position.x), static_cast<int>(position.y),
+                       static_cast<int>(width), static_cast<int>(height), palette[0]);
+
+    int textWidth = MeasureText(text, fontSize);
+    int textX = static_cast<int>(position.x + (width - textWidth) / 2);
+    int textY = static_cast<int>(position.y + (height - fontSize) / 2);
+
+    DrawText(text, textX, textY, fontSize, palette[2]);
 }
 
 bool Button::isPressed(Vector2 mousePos, bool mousePressed)
 {
-    Rectangle rect = {position.x, position.y, static_cast<float>(texture.width), static_cast<float>(texture.height)};
-
-    if (CheckCollisionPointRec(mousePos, rect) && mousePressed)
-    {
-        return true;
-    }
-    return false;
+    Rectangle rect = {position.x, position.y, width, height};
+    return CheckCollisionPointRec(mousePos, rect) && mousePressed;
 }
