@@ -43,9 +43,9 @@ void Config::Draw() const
 
   DrawText(xText, xTextX, xTextY, xFontSize, palette[0]);
 
-  const char *title = "Config";
-  int titleWidth = MeasureText(title, fontSize);
+  const char *title = "Config is under construction!";
+  int titleWidth = MeasureText(title, fontSize / 2);
   int titleX = (int)(modalX + (modalWidth - titleWidth) / 2);
-  int titleY = (int)(modalY + closeModalRect.height);
-  DrawText(title, titleX, titleY, fontSize, palette[3]);
+  int titleY = (int)(modalY + closeModalRect.height * 2);
+  DrawText(title, titleX, titleY, fontSize / 2, palette[3]);
 }
