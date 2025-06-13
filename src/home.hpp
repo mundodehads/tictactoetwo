@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include "button.hpp"
+#include "config.hpp"
 
 class Home
 {
@@ -14,5 +15,7 @@ public:
 
 private:
   Button startButton;
+  Button configButton;
   Button exitButton;
+  Config configModal;
 };

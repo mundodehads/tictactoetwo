@@ -4,11 +4,11 @@
 
 const int virtualWidth = 480;
 const int virtualHeight = 270;
-const int windowWidth = 1920;  // 1440;
-const int windowHeight = 1080; // 810;
+const int windowWidth = 1440; // 1920;  // 1440;
+const int windowHeight = 810; // 1080; // 810;
 
-const int buttonWidth = virtualWidth / 4;
-const int buttonHeight = virtualHeight / 5;
+const int buttonWidth = virtualWidth / 5;
+const int buttonHeight = virtualHeight / 6;
 
 const int fontSize = 20;
 

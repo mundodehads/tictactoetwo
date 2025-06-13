@@ -1,12 +1,16 @@
 #include <raylib.h>
+#include <iostream>
 
 #include "home.hpp"
 #include "globals.hpp"
 #include "button.hpp"
+#include "config.hpp"
 
 Home::Home()
-    : startButton("Start", {virtualWidth / 2.0f - buttonWidth / 2.0f, virtualHeight / 2.0f - buttonHeight}, buttonWidth, buttonHeight, fontSize),
-      exitButton("Exit", {virtualWidth / 2.0f - buttonWidth / 2.0f, (virtualHeight / 2.0f) + (buttonHeight * 0.5f)}, buttonWidth, buttonHeight, fontSize)
+    : startButton("Start", {virtualWidth / 2.0f - buttonWidth / 2.0f, virtualHeight / 2.0f - buttonHeight * 1.5f}, buttonWidth, buttonHeight, fontSize),
+      configButton("Config", {virtualWidth / 2.0f - buttonWidth / 2.0f, (virtualHeight / 2.0f - buttonHeight * 1.5f) + buttonHeight + 10}, buttonWidth, buttonHeight, fontSize),
+      exitButton("Exit", {virtualWidth / 2.0f - buttonWidth / 2.0f, (virtualHeight / 2.0f - buttonHeight * 1.5f) + buttonHeight * 2 + 20}, buttonWidth, buttonHeight, fontSize),
+      configModal()
 {
   gameExit = false;
   gameStart = false;
@@ -22,14 +26,26 @@ void Home::Update()
   mousePosition.y *= scaleY;
   bool mousePressed = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 
-  if (exitButton.isPressed(mousePosition, mousePressed))
+  if (!configModal.showModal)
   {
-    gameExit = true;
-  }
+    if (configButton.isPressed(mousePosition, mousePressed))
+    {
+      configModal.showModal = true;
+    }
 
-  if (startButton.isPressed(mousePosition, mousePressed))
+    if (exitButton.isPressed(mousePosition, mousePressed))
+    {
+      gameExit = true;
+    }
+
+    if (startButton.isPressed(mousePosition, mousePressed))
+    {
+      gameStart = true;
+    }
+  }
+  else
   {
-    gameStart = true;
+    configModal.Update(mousePressed, mousePosition);
   }
 }
 
@@ -42,7 +58,7 @@ void Home::Draw() const
            virtualWidth / 2 - MeasureText(gameTitle, fontSize) / 2,
            gameTitlePosition,
            fontSize,
-           palette[1]);
+           palette[0]);
   const char *gameSubTitle = "Size matters. Strategy too.";
   int gameSubTitleSize = fontSize / 2;
   DrawText(gameSubTitle,
@@ -51,5 +67,11 @@ void Home::Draw() const
            gameSubTitleSize,
            palette[0]);
   startButton.Draw();
+  configButton.Draw();
   exitButton.Draw();
+
+  if (configModal.showModal)
+  {
+    configModal.Draw();
+  }
 }
